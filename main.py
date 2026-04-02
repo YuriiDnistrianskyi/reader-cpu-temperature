@@ -2,7 +2,8 @@ import requests
 import asyncio
 import time
 
-parameter: str = "Core Max"
+PARAMETER: str = "Core Max"
+DEBOUNCE_READ: float = 5.0
 
 parameter_value = None
 is_recursive = True
@@ -10,25 +11,22 @@ is_recursive = True
 def main():
     global is_recursive
     while True:
-        try:
-            data = requests.get('http://127.0.0.1:8085/data.json').json()
+        data = requests.get('http://127.0.0.1:8085/data.json').json()
 
-            if not is_recursive:
-                is_recursive = True
+        if not is_recursive:
+            is_recursive = True
 
-            asyncio.run(recursive_find(data))
+        asyncio.run(recursive_find(data))
 
-            print(parameter_value)
-            time.sleep(5)
-        except Exception as ex:
-            print(f"Error: {ex}")
-            break
+        print(parameter_value)
+
+        time.sleep(DEBOUNCE_READ)
 
 async def recursive_find(data):
     global is_recursive, parameter_value
     if is_recursive:
         if isinstance(data, dict):
-            if data.get('Text') == parameter:
+            if data.get('Text') == PARAMETER:
                 parameter_value = data.get('Value')
                 is_recursive = False
             else:
@@ -41,4 +39,13 @@ async def recursive_find(data):
         return
 
 if __name__ == "__main__":
-    main()
+    try:
+        print("Start read 🌡️")
+        main()
+    except Exception as ex:
+        print(f"Error: {ex}")
+        print("End read ⛔")
+        exit(1)
+    except KeyboardInterrupt:
+        print("End read ✅")
+        exit(0)
