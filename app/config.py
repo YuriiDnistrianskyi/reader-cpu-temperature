@@ -7,5 +7,6 @@ PARAMETER = getenv("Parameter")
 DEBOUNCE_READ = float(getenv("DEBOUNCE_READ"))
 
 MQTT_BROKER_URL = getenv("MQTT_BROKER_URL")
+PORT = int(getenv("PORT"))
 PRIVATE_NAME = getenv("PRIVATE_NAME")
 TOPIC = f"object/{PRIVATE_NAME}/temperature"

@@ -3,11 +3,12 @@ import asyncio
 import time
 
 from app.config import PARAMETER, DEBOUNCE_READ
+from app.mqtt import publish_data
 
 parameter_value = None
 is_recursive = True
 
-def main():
+def main(client):
     global is_recursive
     while True:
         data = requests.get('http://127.0.0.1:8085/data.json').json()
@@ -17,7 +18,7 @@ def main():
 
         asyncio.run(recursive_find(data))
 
-        print(parameter_value)
+        publish_data(client, parameter_value)
 
         time.sleep(DEBOUNCE_READ)
 
@@ -34,5 +35,3 @@ async def recursive_find(data):
         elif isinstance(data, list):
             for value in data:
                 await recursive_find(value)
-    else:
-        return
