@@ -1,10 +1,7 @@
 import time
 from paho.mqtt import client as mqtt_client
 
-from app.config import MQTT_BROKER_URL, PORT, TOPIC, PARAMETER
-
-broker = 'broker.hivemq.com'
-port = 1883
+from app.config import MQTT_BROKER_URL, PORT, TOPIC
 
 def connect_broker():
     def on_connect(client, userdata, flags, rc):
@@ -16,10 +13,11 @@ def connect_broker():
 
     client = mqtt_client.Client()
     client.on_connect = on_connect
-    client.connect(broker, port)
+    client.connect(MQTT_BROKER_URL, PORT)
     return client
 
 def publish_data(client, value):
+    value = float(value.split(' ')[0])
     result = client.publish(TOPIC, value)
     if result[0] != 0:
         print(f"Failed to publish data {result}")
